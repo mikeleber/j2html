@@ -2,6 +2,7 @@ package j2html.tags;
 
 import j2html.attributes.Attr;
 import j2html.attributes.Attribute;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -28,6 +29,18 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     }
 
     /**
+     * Sets a data prefixed attribute
+     *
+     * @param attribute the attribute name to be prefixed with "data-"
+     * @param value     the attribute value
+     * @return itself for easy chaining
+     */
+    public T dataAttr(String attribute, Object value) {
+        setAttribute("data-" + attribute, value == null ? null : String.valueOf(value));
+        return self();
+    }
+
+    /**
      * Sets an attribute on an element
      *
      * @param name  the attribute
@@ -47,30 +60,6 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     }
 
     /**
-     * Sets a custom attribute
-     *
-     * @param attribute the attribute name
-     * @param value     the attribute value
-     * @return itself for easy chaining
-     */
-    public T attr(String attribute, Object value) {
-        setAttribute(attribute, value == null ? null : String.valueOf(value));
-        return self();
-    }
-
-    /**
-     * Sets a data prefixed attribute
-     *
-     * @param attribute the attribute name to be prefixed with "data-"
-     * @param value     the attribute value
-     * @return itself for easy chaining
-     */
-    public T dataAttr(String attribute, Object value) {
-        setAttribute("data-" + attribute, value == null ? null : String.valueOf(value));
-        return self();
-    }
-
-    /**
      * appends a attribute value to an existing list of value/s
      *
      * @param name  the attribute name
@@ -81,10 +70,8 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         if (value == null) {
             return self();
         }
-        if (attributes.size() == 0) {
-            attributes.add(new Attribute(name, value));
-            return self();
-        }
+
+        boolean found = false;
         for (Attribute attribute : attributes) {
             if (attribute.getName().equals(name)) {
                 String attributeValue = attribute.getValue();
@@ -95,8 +82,13 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
                     }
                 }
                 attribute.setValue(attributeValue + " " + value);
+                found=true;
                 break;
             }
+        }
+        if (!found) {
+            //not found -> set as new value
+            setAttribute(name, value);
         }
 
         return self();
@@ -173,16 +165,15 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     }
 
     /**
-     * Call attr-method based on condition
-     * {@link #attr(String attribute, Object value)}
+     * Sets a custom attribute
      *
-     * @param condition the condition
      * @param attribute the attribute name
      * @param value     the attribute value
      * @return itself for easy chaining
      */
-    public T condAttr(boolean condition, String attribute, String value) {
-        return (condition ? attr(attribute, value) : self());
+    public T attr(String attribute, Object value) {
+        setAttribute(attribute, value == null ? null : String.valueOf(value));
+        return self();
     }
 
     @Override
@@ -204,6 +195,10 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
             sb.append(s != null ? s : "").append(" ");
         }
         return attr(Attr.CLASS, sb.toString().trim());
+    }
+
+    public T withAccesskey(String accesskey) {
+        return attr(Attr.ACCESSKEY, accesskey);
     }
 
     /*
@@ -228,68 +223,127 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     translate
      */
 
-    public T withAccesskey(String accesskey){ return attr(Attr.ACCESSKEY, accesskey); }
+    public T withClass(String className) {
+        return attr(Attr.CLASS, className);
+    }
 
-    public T withClass(String className) { return attr(Attr.CLASS, className); }
+    public T isContenteditable() {
+        return attr(Attr.CONTENTEDITABLE, "true");
+    }
 
-    public T isContenteditable(){ return attr(Attr.CONTENTEDITABLE, "true"); }
+    public T withData(String dataAttr, String value) {
+        return attr(Attr.DATA + "-" + dataAttr, value);
+    }
 
-    public T withData(String dataAttr, String value) { return attr(Attr.DATA + "-" + dataAttr, value); }
+    public T withDir(String dir) {
+        return attr(Attr.DIR, dir);
+    }
 
-    public T withDir(String dir) { return attr(Attr.DIR, dir); }
+    public T isDraggable() {
+        return attr(Attr.DRAGGABLE, "true");
+    }
 
-    public T isDraggable(){ return attr(Attr.DRAGGABLE, "true"); }
+    public T isHidden() {
+        return attr(Attr.HIDDEN, null);
+    }
 
-    public T isHidden() { return attr(Attr.HIDDEN, null); }
+    public T withId(String id) {
+        return attr(Attr.ID, id);
+    }
 
-    public T withId(String id) { return attr(Attr.ID, id); }
 
     public T withIs(String element){ return attr(Attr.IS, element); }
 
     public T withLang(String lang) { return attr(Attr.LANG, lang); }
 
+    public T withStyle(String style) {
+        return attr(Attr.STYLE, style);
+    }
     public T withSlot(String name){ return attr(Attr.SLOT, name); }
 
     public T isSpellcheck(){ return attr(Attr.SPELLCHECK, "true"); }
 
-    public T withStyle(String style) { return attr(Attr.STYLE, style); }
+    public T withTabindex(int index) {
+        return attr(Attr.TABINDEX, index);
+    }
 
-    public T withTabindex(int index){ return attr(Attr.TABINDEX, index); }
+    public T withTitle(String title) {
+        return attr(Attr.TITLE, title);
+    }
 
-    public T withTitle(String title) { return attr(Attr.TITLE, title); }
-
-    public T isTranslate(){ return attr(Attr.TRANSLATE, "yes"); }
+    public T isTranslate() {
+        return attr(Attr.TRANSLATE, "yes");
+    }
 
     // ----- start of withCond$ATTR variants -----
-    public T withCondAccessKey(boolean condition, String accesskey){ return condAttr(condition, Attr.ACCESSKEY, accesskey); }
+    public T withCondAccessKey(boolean condition, String accesskey) {
+        return condAttr(condition, Attr.ACCESSKEY, accesskey);
+    }
 
-    public T withCondClass(boolean condition, String className) { return condAttr(condition, Attr.CLASS, className); }
+    /**
+     * Call attr-method based on condition
+     * {@link #attr(String attribute, Object value)}
+     *
+     * @param condition the condition
+     * @param attribute the attribute name
+     * @param value     the attribute value
+     * @return itself for easy chaining
+     */
+    public T condAttr(boolean condition, String attribute, String value) {
+        return (condition ? attr(attribute, value) : self());
+    }
 
-    public T withCondContenteditable(boolean condition){ return attr(Attr.CONTENTEDITABLE, (condition)?"true":"false");}
+    public T withCondClass(boolean condition, String className) {
+        return condAttr(condition, Attr.CLASS, className);
+    }
 
-    public T withCondData(boolean condition, String dataAttr, String value) { return condAttr(condition, Attr.DATA + "-" + dataAttr, value); }
+    public T withCondContenteditable(boolean condition) {
+        return attr(Attr.CONTENTEDITABLE, (condition) ? "true" : "false");
+    }
 
-    public T withCondDir(boolean condition, String dir) { return condAttr(condition, Attr.DIR, dir); }
+    public T withCondData(boolean condition, String dataAttr, String value) {
+        return condAttr(condition, Attr.DATA + "-" + dataAttr, value);
+    }
 
-    public T withCondDraggable(boolean condition){ return attr(Attr.DRAGGABLE, (condition)?"true":"false"); }
+    public T withCondDir(boolean condition, String dir) {
+        return condAttr(condition, Attr.DIR, dir);
+    }
 
-    public T withCondHidden(boolean condition) { return condAttr(condition, Attr.HIDDEN, null); }
+    public T withCondDraggable(boolean condition) {
+        return attr(Attr.DRAGGABLE, (condition) ? "true" : "false");
+    }
 
-    public T withCondId(boolean condition, String id) { return condAttr(condition, Attr.ID, id); }
+    public T withCondHidden(boolean condition) {
+        return condAttr(condition, Attr.HIDDEN, null);
+    }
 
+    public T withCondId(boolean condition, String id) {
+        return condAttr(condition, Attr.ID, id);
+    }
     public T withCondIs(boolean condition, String element){ return condAttr(condition, Attr.IS, element); }
 
     public T withCondLang(boolean condition, String lang) { return condAttr(condition, Attr.LANG, lang); }
+
 
     public T withCondSlot(boolean condition, String name){ return condAttr(condition, Attr.SLOT, name); }
 
     public T withCondSpellcheck(boolean condition){ return attr(Attr.SPELLCHECK, (condition)?"true":"false"); }
 
-    public T withCondStyle(boolean condition, String style) { return condAttr(condition, Attr.STYLE, style); }
 
-    public T withCondTabindex(boolean condition, int index){ return condAttr(condition, Attr.TABINDEX, index+""); }
 
-    public T withCondTitle(boolean condition, String title) { return condAttr(condition, Attr.TITLE, title); }
+    public T withCondStyle(boolean condition, String style) {
+        return condAttr(condition, Attr.STYLE, style);
+    }
 
-    public T withCondTranslate(boolean condition){ return attr(Attr.TRANSLATE, (condition)?"yes":"no"); }
+    public T withCondTabindex(boolean condition, int index) {
+        return condAttr(condition, Attr.TABINDEX, index + "");
+    }
+
+    public T withCondTitle(boolean condition, String title) {
+        return condAttr(condition, Attr.TITLE, title);
+    }
+
+    public T withCondTranslate(boolean condition) {
+        return attr(Attr.TRANSLATE, (condition) ? "yes" : "no");
+    }
 }
