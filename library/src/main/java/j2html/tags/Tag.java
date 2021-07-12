@@ -13,11 +13,11 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
 
     protected Tag(String tagName) {
         this.tagName = tagName;
-        this.attributes = new ArrayList<>();
+        attributes = new ArrayList<>();
     }
 
     public String getTagName() {
-        return this.tagName;
+        return tagName;
     }
 
     protected boolean hasTagName() {
@@ -59,6 +59,15 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return attributes.add(new Attribute(name, value));
     }
 
+    public T appendClass(String value) {
+        return appendAttrValue("class", value);
+    }
+    public T appendClass(String... values) {
+        for (String value:values) {
+             appendAttrValue("class", value);
+        }
+        return self();
+    }
     /**
      * appends a attribute value to an existing list of value/s
      *
@@ -82,7 +91,7 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
                     }
                 }
                 attribute.setValue(attributeValue + " " + value);
-                found=true;
+                found = true;
                 break;
             }
         }
@@ -119,8 +128,9 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
                         //skip
                     } else {
                         newValue.append(currentToken);
-                        if (st.hasMoreTokens())
+                        if (st.hasMoreTokens()) {
                             newValue.append(" ");
+                        }
                     }
                 }
                 attribute.setValue(newValue.toString());
@@ -181,7 +191,7 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         if (!(obj instanceof Tag)) {
             return false;
         }
-        return ((Tag<?>) obj).render().equals(this.render());
+        return ((Tag<?>) obj).render().equals(render());
     }
 
     /**
