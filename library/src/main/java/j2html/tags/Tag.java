@@ -62,12 +62,7 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     public T appendClass(String value) {
         return appendAttrValue("class", value);
     }
-    public T appendClass(String... values) {
-        for (String value:values) {
-             appendAttrValue("class", value);
-        }
-        return self();
-    }
+
     /**
      * appends a attribute value to an existing list of value/s
      *
@@ -100,6 +95,13 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
             setAttribute(name, value);
         }
 
+        return self();
+    }
+
+    public T appendClass(String... values) {
+        for (String value : values) {
+            appendAttrValue("class", value);
+        }
         return self();
     }
 
@@ -235,6 +237,13 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
 
     public T withClass(String className) {
         return attr(Attr.CLASS, className);
+    }
+
+    public T withClass(String... className) {
+        for (String name : className) {
+            attr(Attr.CLASS, name);
+        }
+        return self();
     }
 
     public T isContenteditable() {
