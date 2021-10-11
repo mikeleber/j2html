@@ -98,11 +98,18 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return self();
     }
 
-    public T appendClass(String... values) {
-        for (String value : values) {
-            appendAttrValue("class", value);
+    /**
+     * appends a attribute value to an existing list of value/s
+     *
+     * @param name  the attribute name
+     * @param value the attribute value
+     * @return itself for easy chaining
+     */
+    public T appendStyleValue(String name, String value) {
+        if (value == null) {
+            return removeAttrValue(Attr.STYLE, name + ":");
         }
-        return self();
+        return appendAttrValue(Attr.STYLE, name + ":" + value);
     }
 
     /**
@@ -113,6 +120,10 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
      * @return itself for easy chaining
      */
     public T removeAttrValue(String name, String value) {
+        return removeAttrValue(name, value, false);
+    }
+
+    public T removeAttrValue(String name, String value, boolean startsWith) {
         if (value == null) {
             return self();
         }
@@ -128,6 +139,8 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
                     String currentToken = st.nextToken();
                     if (value.equals(currentToken)) {
                         //skip
+                    } else if (startsWith && currentToken.startsWith(value)) {
+                        //skip
                     } else {
                         newValue.append(currentToken);
                         if (st.hasMoreTokens()) {
@@ -140,6 +153,13 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
             }
         }
 
+        return self();
+    }
+
+    public T appendClass(String... values) {
+        for (String value : values) {
+            appendAttrValue("class", value);
+        }
         return self();
     }
 
