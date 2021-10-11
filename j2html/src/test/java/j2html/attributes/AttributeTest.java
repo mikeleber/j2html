@@ -27,12 +27,33 @@ public class AttributeTest {
         testTag.attr("href", "http://example.org");
         assertThat(testTag.render(), is("<a href=\"http://example.org\"></a>"));
     }
+
     @Test
     public void testSetDataAttribute() throws Exception {
         ContainerTag testTag = new ContainerTag("a");
         testTag.dataAttr("href", "http://example.com");
         testTag.dataAttr("href", "http://example.org");
         assertThat(testTag.render(), is("<a data-href=\"http://example.org\"></a>"));
+    }
+
+    @Test
+    public void testAppendStyleValue() throws Exception {
+        ContainerTag testTag = new ContainerTag("a");
+        testTag.appendStyleValue("display", null);
+        testTag.appendStyleValue("display", "none");
+        testTag.appendStyleValue("visibility", "always");
+        assertThat(testTag.render(), is("<a style=\"display:none visibility:always\"></a>"));
+    }
+
+    @Test
+    public void testRemoveStyleValue() throws Exception {
+        ContainerTag testTag = new ContainerTag("a");
+        testTag.appendStyleValue("display", null);
+        testTag.appendStyleValue("display", "none");
+        testTag.appendStyleValue("visibility", "always");
+        assertThat(testTag.render(), is("<a style=\"display:none visibility:always\"></a>"));
+        testTag.removeStyleValue("display");
+        assertThat(testTag.render(), is("<a style=\"visibility:always\"></a>"));
     }
 
     @Test
@@ -43,6 +64,7 @@ public class AttributeTest {
         testTag.appendAttrValue("class", "css2");
         assertThat(testTag.render(), is("<a class=\"css1 css2\"></a>"));
     }
+
     @Test
     public void testRemoveAttributeValue() throws Exception {
         ContainerTag testTag = new ContainerTag("a");
@@ -53,12 +75,14 @@ public class AttributeTest {
         testTag.removeAttrValue("class", "css2");
         assertThat(testTag.render(), is("<a class=\"css1 css3\"></a>"));
     }
+
     @Test
     public void testRemoveAttributeValueFromEmpty() throws Exception {
         ContainerTag testTag = new ContainerTag("a");
         testTag.removeAttrValue("class", "css2");
         assertThat(testTag.render(), is("<a></a>"));
     }
+
     @Test
     public void testRemoveAttributeValueFromNotExisting() throws Exception {
         ContainerTag testTag = new ContainerTag("a");
