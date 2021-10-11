@@ -156,6 +156,11 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return self();
     }
 
+    public T removeStyleValue(String name) {
+        if (name == null) return self();
+        return removeAttrValue(Attr.STYLE, name + ":", true);
+    }
+
     public T appendClass(String... values) {
         for (String value : values) {
             appendAttrValue("class", value);
