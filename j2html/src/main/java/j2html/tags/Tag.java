@@ -6,6 +6,8 @@ import j2html.attributes.Attribute;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public abstract class Tag<T extends Tag<T>> extends DomContent implements IInstance<T> {
     private final String tagName;
@@ -382,5 +384,9 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
 
     public T withCondTranslate(boolean condition) {
         return attr(Attr.TRANSLATE, (condition) ? "yes" : "no");
+    }
+    public void traverseTree(Consumer<DomContent> consumer, Predicate stopPredicate) {
+        if (stopPredicate.test(this)){return;}
+        consumer.accept(this);
     }
 }
