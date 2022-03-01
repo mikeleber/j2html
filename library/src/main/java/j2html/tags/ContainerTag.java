@@ -10,6 +10,8 @@ import j2html.rendering.IndentedHtml;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
@@ -67,7 +69,21 @@ public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
         }
         return self();
     }
-
+    /**
+     * Traverse the whole tree and call accept on consumer instance
+     *
+     * @param consumer DomContent-objects to be consumed
+     * @return itself for easy chaining
+     */
+    public void traverseTree(Consumer<DomContent> consumer, Predicate stopPredicate) {
+        if (stopPredicate.test(this)){return;}
+        consumer.accept(this);
+        if (children != null) {
+            for (DomContent child : children) {
+                child.traverseTree(consumer, stopPredicate);
+            }
+        }
+    }
 
     /**
      * Call with-method based on condition
