@@ -179,8 +179,10 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     }
 
     public T appendClass(String... values) {
-        for (String value : values) {
-            appendAttrValue("class", value);
+        if (values != null) {
+            for (String value : values) {
+                appendAttrValue("class", value);
+            }
         }
         return self();
     }
