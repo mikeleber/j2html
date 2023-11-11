@@ -296,6 +296,14 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return attr(Attr.CLASS, className);
     }
 
+    public T withClass(boolean cond, String trueClass, String falseClass) {
+        return attr(Attr.CLASS, (cond ? trueClass : falseClass));
+    }
+
+    public T appendClass(boolean cond, String trueClass, String falseClass) {
+        appendClass((cond ? trueClass : falseClass));
+        return self();
+    }
     public T isContenteditable() {
         return attr(Attr.CONTENTEDITABLE, "true");
     }
