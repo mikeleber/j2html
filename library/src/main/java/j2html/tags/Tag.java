@@ -65,6 +65,13 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return appendAttrValue("class", value);
     }
 
+    public T appendClassNotNull(String value) {
+        if (value == null) {
+            return self();
+        }
+        return appendAttrValue("class", value);
+    }
+
     /**
      * appends a attribute value to an existing list of value/s
      *
@@ -172,8 +179,10 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     }
 
     public T appendClass(String... values) {
-        for (String value : values) {
-            appendAttrValue("class", value);
+        if (values != null) {
+            for (String value : values) {
+                appendAttrValue("class", value);
+            }
         }
         return self();
     }
@@ -220,6 +229,19 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
      */
     public T attr(String attribute, Object value) {
         setAttribute(attribute, value == null ? null : String.valueOf(value));
+        return self();
+    }
+
+    /**
+     * Sets a custom attribute
+     *
+     * @param attribute the attribute name
+     * @param value     the attribute value
+     * @return itself for easy chaining
+     */
+    public T attrNotNull(String attribute, Object value) {
+        if (value != null)
+            attr(attribute, value);
         return self();
     }
 
@@ -274,6 +296,14 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return attr(Attr.CLASS, className);
     }
 
+    public T withClass(boolean cond, String trueClass, String falseClass) {
+        return attr(Attr.CLASS, (cond ? trueClass : falseClass));
+    }
+
+    public T appendClass(boolean cond, String trueClass, String falseClass) {
+        appendClass((cond ? trueClass : falseClass));
+        return self();
+    }
     public T isContenteditable() {
         return attr(Attr.CONTENTEDITABLE, "true");
     }
