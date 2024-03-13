@@ -125,6 +125,14 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return removeAttrValue(name, value, false);
     }
 
+    public T withElseCondStyle(boolean condition, String style, String elseStyle) {
+        return condElseAttr(condition, Attr.STYLE, style, elseStyle);
+    }
+
+    public T condElseAttr(boolean condition, String attribute, String value, String elseValue) {
+        return (condition ? attr(attribute, value) : attr(attribute, elseValue));
+    }
+
     public T removeAttrValue(String name, String value, boolean startsWith) {
         if (value == null) {
             return self();
@@ -385,8 +393,11 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
     public T withCondTranslate(boolean condition) {
         return attr(Attr.TRANSLATE, (condition) ? "yes" : "no");
     }
+
     public void traverseTree(Consumer<DomContent> consumer, Predicate stopPredicate) {
-        if (stopPredicate.test(this)){return;}
+        if (stopPredicate.test(this)) {
+            return;
+        }
         consumer.accept(this);
     }
 }
