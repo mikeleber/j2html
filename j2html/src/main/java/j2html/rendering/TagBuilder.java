@@ -1,5 +1,7 @@
 package j2html.rendering;
 
+import j2html.tags.Tag;
+
 import java.io.IOException;
 
 /**
@@ -54,4 +56,7 @@ public interface TagBuilder extends Appendable {
     @Override
     @Deprecated
     TagBuilder append(char c) throws IOException;
+
+    <T extends Tag<T>> void registerTag(String id, Tag<T> tContainerTag);
+    <T extends Tag<T>> T getTag(String id);
 }

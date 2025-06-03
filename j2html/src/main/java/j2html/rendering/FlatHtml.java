@@ -1,9 +1,12 @@
 package j2html.rendering;
 
 import j2html.Config;
+import j2html.tags.Tag;
 import j2html.utils.TextEscaper;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Composes HTML without any extra line breaks or indentation.
@@ -11,6 +14,8 @@ import java.io.IOException;
  * @param <T> The type of the Appendable to which HTML will be appended.
  */
 public class FlatHtml<T extends Appendable> implements HtmlBuilder<T> {
+
+    private Map<String, Tag> tags;
 
     /**
      * Returns an HtmlBuilder that will generate flat HTML using
@@ -50,6 +55,7 @@ public class FlatHtml<T extends Appendable> implements HtmlBuilder<T> {
     /**
      * Returns an HtmlBuilder that will generate flat HTML in memory
      * using the given Config.
+     *
      * @param config The Config which will specify text escapement, tag closing, etc.
      * @return An HtmlBuilder for flat HTML.
      */
@@ -177,6 +183,21 @@ public class FlatHtml<T extends Appendable> implements HtmlBuilder<T> {
         public TagBuilder append(char c) throws IOException {
             out.append(c);
             return this;
+        }
+
+        @Override
+        public <T extends Tag<T>> void registerTag(String id, Tag<T> tag) {
+            if (tags == null) {
+                if (tag == null) return;
+                else tags = new HashMap<>();
+            }
+            tags.put(id, tag);
+        }
+
+        @Override
+        public <T extends Tag<T>> T getTag(String id) {
+            if (tags == null) return null;
+            return (T) tags.get(id);
         }
     }
 }

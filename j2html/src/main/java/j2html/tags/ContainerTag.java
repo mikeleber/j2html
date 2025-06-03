@@ -2,10 +2,10 @@ package j2html.tags;
 
 import j2html.Config;
 import j2html.attributes.Attribute;
-import j2html.rendering.TagBuilder;
 import j2html.rendering.FlatHtml;
 import j2html.rendering.HtmlBuilder;
 import j2html.rendering.IndentedHtml;
+import j2html.rendering.TagBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,6 +69,7 @@ public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
         }
         return self();
     }
+
     /**
      * Traverse the whole tree and call accept on consumer instance
      *
@@ -76,7 +77,9 @@ public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
      * @return itself for easy chaining
      */
     public void traverseTree(Consumer<DomContent> consumer, Predicate stopPredicate) {
-        if (stopPredicate.test(this)){return;}
+        if (stopPredicate.test(this)) {
+            return;
+        }
         consumer.accept(this);
         if (children != null) {
             for (DomContent child : children) {
@@ -164,7 +167,7 @@ public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
     public String renderFormatted() {
         try {
             return render(IndentedHtml.into(new StringBuilder(), Config.global())).toString();
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -173,21 +176,29 @@ public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
     public <A extends Appendable> A render(HtmlBuilder<A> builder, Object model) throws IOException {
         if (hasTagName()) {
             TagBuilder tagBuilder = builder.appendStartTag(getTagName());
-            for(Attribute attribute : getAttributes()){
+            for (Attribute attribute : getAttributes()) {
                 attribute.render(tagBuilder, model);
             }
             tagBuilder.completeTag();
+            tagBuilder.registerTag(getId(), this);
         }
 
-        for(DomContent child : children){
+        for (DomContent child : children) {
             child.render(builder, model);
         }
 
-        if(hasTagName()) {
+        if (hasTagName()) {
             builder.appendEndTag(getTagName());
         }
 
         return builder.output();
+    }
+
+    private String getId() {
+        for (Attribute attribute : getAttributes()) {
+            if (attribute.getName().equals("id")) return attribute.getValue();
+        }
+        return null;
     }
 
     @Override
