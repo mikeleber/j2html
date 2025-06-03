@@ -20,6 +20,8 @@ public class IndentedHtml<T extends Appendable> implements HtmlBuilder<T> {
 
     private Map<String, Tag> tags;
 
+
+
     /**
      * Returns an HtmlBuilder that will generate indented HTML using
      * Config defaults.
@@ -42,7 +44,9 @@ public class IndentedHtml<T extends Appendable> implements HtmlBuilder<T> {
      * @return An HtmlBuilder for indented HTML.
      */
     public static final <T extends Appendable> IndentedHtml<T> into(T out, Config config) {
-        return new IndentedHtml<>(out, config);
+        return new IndentedHtml<>(out, config,null);
+    } public static final <T extends Appendable> IndentedHtml<T> into(T out, Config config,Map<String,Tag>tagsMap) {
+        return new IndentedHtml<>(out, config,tagsMap);
     }
 
     /**
@@ -63,7 +67,7 @@ public class IndentedHtml<T extends Appendable> implements HtmlBuilder<T> {
      * @return An HtmlBuilder for indented HTML.
      */
     public static final IndentedHtml<StringBuilder> inMemory(Config config) {
-        return into(new StringBuilder(), config);
+        return into(new StringBuilder(), config,null);
     }
 
     private final T out;
@@ -83,6 +87,14 @@ public class IndentedHtml<T extends Appendable> implements HtmlBuilder<T> {
     private IndentedHtml(T out, Config config) {
         this.out = out;
         this.indenter = config.indenter();
+        this.textEscaper = config.textEscaper();
+        this.enclosingElementAttributes = new IndentedTagBuilder(false);
+        this.emptyElementAttributes = new IndentedTagBuilder(config.closeEmptyTags());
+    }
+    private IndentedHtml(T out, Config config,Map<String,Tag>tagsMap) {
+        this.out = out;
+        this.indenter = config.indenter();
+        this.tags = tagsMap;
         this.textEscaper = config.textEscaper();
         this.enclosingElementAttributes = new IndentedTagBuilder(false);
         this.emptyElementAttributes = new IndentedTagBuilder(config.closeEmptyTags());

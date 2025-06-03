@@ -42,6 +42,10 @@ public class FlatHtml<T extends Appendable> implements HtmlBuilder<T> {
         return new FlatHtml<>(out, config);
     }
 
+    public static final <T extends Appendable> FlatHtml<T> into(T out, Config config, Map<String, Tag> tagsMap) {
+        return new FlatHtml<>(out, config, tagsMap);
+    }
+
     /**
      * Returns an HtmlBuilder that will generate flat HTML in memory
      * using Config defaults.
@@ -70,6 +74,14 @@ public class FlatHtml<T extends Appendable> implements HtmlBuilder<T> {
 
     private FlatHtml(T out, Config config) {
         this.out = out;
+        this.textEscaper = config.textEscaper();
+        this.enclosingElementAttributes = new FlatTagBuilder(false);
+        this.emptyElementAttributes = new FlatTagBuilder(config.closeEmptyTags());
+    }
+
+    private FlatHtml(T out, Config config, Map<String, Tag> tagsMap) {
+        this.out = out;
+        this.tags = tagsMap;
         this.textEscaper = config.textEscaper();
         this.enclosingElementAttributes = new FlatTagBuilder(false);
         this.emptyElementAttributes = new FlatTagBuilder(config.closeEmptyTags());
