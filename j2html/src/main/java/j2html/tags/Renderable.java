@@ -6,6 +6,7 @@ import j2html.rendering.HtmlBuilder;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Map;
 
 public interface Renderable {
 
@@ -45,6 +46,17 @@ public interface Renderable {
     default String render() {
         try {
             return render(FlatHtml.into(new StringBuilder(), Config.global())).toString();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    default HtmlBuilder renderRecorded(Map<String, Tag> renderedTags) {
+
+        try {
+            HtmlBuilder builder = FlatHtml.into(new StringBuilder(), Config.global(), renderedTags);
+            renderModel(builder, null);
+            return builder;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

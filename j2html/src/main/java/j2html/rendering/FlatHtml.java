@@ -5,7 +5,6 @@ import j2html.tags.Tag;
 import j2html.utils.TextEscaper;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -197,19 +196,26 @@ public class FlatHtml<T extends Appendable> implements HtmlBuilder<T> {
             return this;
         }
 
-        @Override
-        public <T extends Tag<T>> void registerTag(String id, Tag<T> tag) {
-            if (tags == null) {
-                if (tag == null) return;
-                else tags = new HashMap<>();
-            }
-            tags.put(id, tag);
-        }
 
-        @Override
-        public <T extends Tag<T>> T getTag(String id) {
-            if (tags == null) return null;
-            return (T) tags.get(id);
+    }
+
+    @Override
+    public Map<String, Tag> getTags() {
+        return tags;
+    }
+    @Override
+    public <T extends Tag<T>> void registerTag(String id, Tag<T> tag) {
+        if (tags == null) {
+            return;
         }
+        if (tag == null) tags.remove(id);
+        else
+            tags.put(id, tag);
+    }
+
+    @Override
+    public <T extends Tag<T>> T getTag(String id) {
+        if (tags == null) return null;
+        return (T) tags.get(id);
     }
 }

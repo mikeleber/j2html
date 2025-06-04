@@ -180,7 +180,7 @@ public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
                 attribute.render(tagBuilder, model);
             }
             tagBuilder.completeTag();
-            tagBuilder.registerTag(getId(), this);
+            builder.registerTag(getId(), this);
         }
 
         for (DomContent child : children) {

@@ -261,19 +261,26 @@ public class IndentedHtml<T extends Appendable> implements HtmlBuilder<T> {
         }
 
 
-        @Override
-        public <T extends Tag<T>> void registerTag(String id, Tag<T> tag) {
-            if (tags == null) {
-                if (tag == null) return;
-                else tags = new HashMap<>();
-            }
-            tags.put(id, tag);
-        }
 
-        @Override
-        public <T extends Tag<T>> T getTag(String id) {
-            if (tags == null) return null;
-            return (T) tags.get(id);
-        }
     }
+    @Override
+    public Map<String, Tag> getTags() {
+        return tags;
+    }
+    @Override
+    public <T extends Tag<T>> void registerTag(String id, Tag<T> tag) {
+        if (tags == null) {
+            return;
+        }
+        if (tag == null) tags.remove(id);
+        else
+            tags.put(id, tag);
+    }
+
+    @Override
+    public <T extends Tag<T>> T getTag(String id) {
+        if (tags == null) return null;
+        return (T) tags.get(id);
+    }
+
 }

@@ -27,9 +27,15 @@ public class EmptyTag<T extends EmptyTag<T>> extends Tag<T> {
             attr.render(attrs, model);
         }
         attrs.completeTag();
+        builder.registerTag(getId(),this);
         return builder.output();
     }
-
+    private String getId() {
+        for (Attribute attribute : getAttributes()) {
+            if (attribute.getName().equals("id")) return attribute.getValue();
+        }
+        return null;
+    }
     @Override
     @Deprecated
     public void renderModel(Appendable writer, Object model) throws IOException {

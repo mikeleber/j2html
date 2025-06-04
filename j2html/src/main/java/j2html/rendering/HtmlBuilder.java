@@ -1,6 +1,10 @@
 package j2html.rendering;
 
+import j2html.tags.ContainerTag;
+import j2html.tags.Tag;
+
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Implementations of HtmlBuilder are wrappers around an
@@ -86,4 +90,9 @@ public interface HtmlBuilder<T extends Appendable> extends Appendable {
     @Override
     @Deprecated
     HtmlBuilder<T> append(char c) throws IOException;
+
+    default Map<String, Tag> getTags(){return null;}
+
+    <T extends Tag<T>> void registerTag(String id, Tag<T> tContainerTag);
+    <T extends Tag<T>> T getTag(String id);
 }
