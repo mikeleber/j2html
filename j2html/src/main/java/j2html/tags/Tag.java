@@ -42,6 +42,12 @@ public abstract class Tag<T extends Tag<T>> extends DomContent implements IInsta
         return self();
     }
 
+    public String getAttr(String name) {
+        for (Attribute attribute : getAttributes()) {
+            if (attribute.getName().equals(name)) return attribute.getValue();
+        }
+        return null;
+    }
     /**
      * Sets an attribute on an element
      *

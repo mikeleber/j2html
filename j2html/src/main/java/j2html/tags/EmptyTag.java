@@ -2,9 +2,9 @@ package j2html.tags;
 
 import j2html.Config;
 import j2html.attributes.Attribute;
-import j2html.rendering.TagBuilder;
 import j2html.rendering.FlatHtml;
 import j2html.rendering.HtmlBuilder;
+import j2html.rendering.TagBuilder;
 
 import java.io.IOException;
 
@@ -27,15 +27,14 @@ public class EmptyTag<T extends EmptyTag<T>> extends Tag<T> {
             attr.render(attrs, model);
         }
         attrs.completeTag();
-        builder.registerTag(getId(),this);
+        builder.registerTag(getId(), this);
         return builder.output();
     }
+
     private String getId() {
-        for (Attribute attribute : getAttributes()) {
-            if (attribute.getName().equals("id")) return attribute.getValue();
-        }
-        return null;
+        return getAttr("id");
     }
+
     @Override
     @Deprecated
     public void renderModel(Appendable writer, Object model) throws IOException {

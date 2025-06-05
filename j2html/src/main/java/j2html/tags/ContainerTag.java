@@ -195,10 +195,7 @@ public class ContainerTag<T extends ContainerTag<T>> extends Tag<T> {
     }
 
     private String getId() {
-        for (Attribute attribute : getAttributes()) {
-            if (attribute.getName().equals("id")) return attribute.getValue();
-        }
-        return null;
+       return getAttr("id");
     }
 
     @Override
